@@ -1,6 +1,6 @@
-import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
+import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, CircularProgress, Link, Typography } from "@mui/material";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../features/Productos/thunkProductos";
 
 
@@ -8,35 +8,49 @@ export default function CardProduct() {
 
   const dispatch = useDispatch();
 
+  const {isLoading, productos = []} = useSelector(state=> state.products)
+
   useEffect(() => {
     dispatch(getProducts())
   }, [])
   
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
-    <CardActionArea>
-      <CardMedia
-        component="img"
-        height="140"
-        image="/static/images/cards/contemplative-reptile.jpg"
-        alt="producto"
-      />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          Lizard
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Lizards are a widespread group of squamate reptiles, with over 6,000
-          species, ranging across all continents except Antarctica
-        </Typography>
-      </CardContent>
-    </CardActionArea>
-    <CardActions>
-      <Button size="small" color="primary">
-        Share
-      </Button>
-    </CardActions>
-  </Card>
+    isLoading
+    ? (<CircularProgress/>)
+  
+    :
+    <div>
+    {
+      productos.map((producto) => {
+        return(
+        <Card sx={{ maxWidth: 345 }} key={producto.id}>
+        <CardActionArea>
+          <CardMedia
+            component="img"
+            height="420"
+            image={producto.image}
+            alt="producto"
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              {producto.title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {producto.description}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        <CardActions>
+          <Button size="small" color="primary">
+            Comprar
+          </Button>
+          <Link href="#" variant="body2">{producto.category}</Link>
+        </CardActions>
+      </Card>)
+      })
+
+    }
+    </div>
   )
 }
